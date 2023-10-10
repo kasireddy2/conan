@@ -1,0 +1,36 @@
+trigger:
+- '*'
+
+pool:
+  vmImage: 'windows-latest' # You can choose the image that suits your needs
+
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+
+- script: |
+    # Set up your build environment here
+    # For example, install a C++ compiler and Conan
+    choco install visualcpp-build-tools
+    pip install conan
+  displayName: 'Set up build environment'
+
+- checkout: self
+
+- script: |
+    # Navigate to the directory containing your source code
+    cd src
+
+    # Build your C++ program here
+    # For example, if using g++, you can use the command:
+    # g++ main.cpp -o HelloWorld
+    g++ main.cpp -o HelloWorld
+  displayName: 'Build C++ program'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.SourcesDirectory)/src'
+    artifactName: 'C++HelloWorld'
+  displayName: 'Publish artifacts'
